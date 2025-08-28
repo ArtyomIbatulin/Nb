@@ -17,22 +17,29 @@ datasource db {
 // https://www.prisma.io/docs/orm/overview/databases/mongodb
 
 model User {
-  id    String  @id @default(auto()) @map("_id") @db.ObjectId
-  email String  @unique
-  name  String?
-  role  Role    @default(USER)
-  posts Post[]
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  email     String @unique
+  password  String
+  name      String
+  avatarUrl String
+  role      Role   @default(USER)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Post {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  published Boolean @default(false)
-  title     String
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  String  @db.ObjectId
+model Book {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  imgUrl      String
+  price       String
+  description String
+
+  // category Category @relation(fields: [categoryId], references: [id])
+  // categoryId String @db.ObjectId
+
+  // author    User?   @relation(fields: [authorId], references: [id])
+  // authorId  String  @db.ObjectId
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
