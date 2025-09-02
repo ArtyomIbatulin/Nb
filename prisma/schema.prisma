@@ -25,6 +25,9 @@ model User {
   avatarUrl String
   role      Role   @default(USER)
 
+  cart   Cart? // one to one 
+  orders Order[] // one to many
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -62,6 +65,51 @@ model Author {
 
 model Cart {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique @db.ObjectId // one to one 
+
+  items CartItem[]
+
+  totalAmount Int    @default(0)
+  token       String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CartItem {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // book or bookItem ??? 
+
+  cart   Cart   @relation(fields: [cartId], references: [id])
+  cartId String @db.ObjectId
+
+  quantity Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique @db.ObjectId
+
+  token      String
+  totalAmout Int
+  status     Status
+  paymentId  String?
+
+  items Json // список товаров в заказе 
+
+  name    String
+  email   String
+  phone   String
+  address String
+  comment String? // инфа о заказчике со страницы оформления заказа 
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -105,4 +153,10 @@ model Wishlist {
 enum Role {
   USER
   ADMIN
+}
+
+enum Status {
+  PENDING
+  SUCCEEDED
+  CANCELLED
 }
