@@ -37,11 +37,13 @@ model Book {
   price       String
   description String
 
-  // category Category @relation(fields: [categoryId], references: [id])
-  // categoryId String @db.ObjectId
+  category   Category @relation(fields: [categoryId], references: [id]) // one to many
+  categoryId String   @db.ObjectId
 
   // author    User?   @relation(fields: [authorId], references: [id])
   // authorId  String  @db.ObjectId
+
+  // authors Author[] many to many
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -50,7 +52,9 @@ model Book {
 model Author {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  name String
+  name String @unique
+
+  // books Book[] 
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -66,7 +70,8 @@ model Cart {
 model Category {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  name String
+  name  String @unique
+  books Book[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
