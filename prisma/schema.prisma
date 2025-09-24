@@ -6,14 +6,14 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 // https://www.prisma.io/docs/orm/overview/databases/mongodb
 
 model User {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id Int @id @default(autoincrement())
 
   email     String @unique
   password  String
@@ -30,7 +30,7 @@ model User {
 }
 
 model Book {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id Int @id @default(autoincrement())
 
   name        String
   imgUrl      String
@@ -38,33 +38,33 @@ model Book {
   description String
 
   category   Category @relation(fields: [categoryId], references: [id]) // one to many
-  categoryId String   @db.ObjectId
+  categoryId Int
 
   // author    User?   @relation(fields: [authorId], references: [id])
-  // authorId  String  @db.ObjectId
+  // authorId  Int
 
-  // authors Author[] many to many
+  authors Author[] //many to many
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Author {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id Int @id @default(autoincrement())
 
   name String @unique
 
-  // books Book[] 
+  books Book[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Cart {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id Int @id @default(autoincrement())
 
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @unique @db.ObjectId // one to one 
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique // one to one 
 
   items CartItem[]
 
@@ -76,12 +76,12 @@ model Cart {
 }
 
 model CartItem {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id Int @id @default(autoincrement())
 
   // book or bookItem ??? 
 
-  cart   Cart   @relation(fields: [cartId], references: [id])
-  cartId String @db.ObjectId
+  cart   Cart @relation(fields: [cartId], references: [id])
+  cartId Int
 
   quantity Int
 
@@ -90,10 +90,11 @@ model CartItem {
 }
 
 model Wishlist {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  // id String @id @default(auto()) @map("_id") @db.ObjectId
+  id Int @id @default(autoincrement())
 
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @unique @db.ObjectId // one to one 
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique // one to one 
 
   items WishlistItem[]
 
@@ -104,12 +105,12 @@ model Wishlist {
 }
 
 model WishlistItem {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id Int @id @default(autoincrement())
 
   // book or bookItem ??? 
 
   wishlist   Wishlist @relation(fields: [wishlistId], references: [id])
-  wishlistId String   @db.ObjectId
+  wishlistId Int
 
   quantity Int
 
@@ -118,10 +119,10 @@ model WishlistItem {
 }
 
 model Order {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id Int @id @default(autoincrement())
 
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @unique @db.ObjectId
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
 
   token      String
   totalAmout Int
@@ -141,7 +142,7 @@ model Order {
 }
 
 model Category {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id Int @id @default(autoincrement())
 
   name  String @unique
   books Book[]
@@ -151,7 +152,7 @@ model Category {
 }
 
 model Comment {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id Int @id @default(autoincrement())
 
   text String
 
@@ -160,7 +161,7 @@ model Comment {
 }
 
 model Rating {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id Int @id @default(autoincrement())
 
   rating String
 
