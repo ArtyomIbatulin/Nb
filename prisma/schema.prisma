@@ -1,16 +1,11 @@
-// https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/mongodb-typescript-mongodb
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
-// https://www.prisma.io/docs/orm/overview/databases/mongodb
 
 model User {
   id Int @id @default(autoincrement())
@@ -39,9 +34,6 @@ model Book {
 
   category   Category @relation(fields: [categoryId], references: [id]) // one to many
   categoryId Int
-
-  // author    User?   @relation(fields: [authorId], references: [id])
-  // authorId  Int
 
   authors Author[] //many to many
 
@@ -90,7 +82,6 @@ model CartItem {
 }
 
 model Wishlist {
-  // id String @id @default(auto()) @map("_id") @db.ObjectId
   id Int @id @default(autoincrement())
 
   user   User @relation(fields: [userId], references: [id])
@@ -179,5 +170,3 @@ enum Status {
   SUCCEEDED
   CANCELLED
 }
-
-// https://github.com/prisma/prisma/issues/7119
