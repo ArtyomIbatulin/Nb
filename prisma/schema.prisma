@@ -35,6 +35,11 @@ model Book {
   category   Category @relation(fields: [categoryId], references: [id]) // one to many
   categoryId Int
 
+  comments Comment[] // one to many
+
+  rating   Rating @relation(fields: [ratingId], references: [id]) // one to many
+  ratingId Int
+
   authors Author[] //many to many
 
   createdAt DateTime @default(now())
@@ -46,7 +51,7 @@ model Author {
 
   name String @unique
 
-  books Book[]
+  books Book[] // many to many
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -55,8 +60,8 @@ model Author {
 model Cart {
   id Int @id @default(autoincrement())
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique // one to one 
+  user   User @relation(fields: [userId], references: [id]) // one to one
+  userId Int  @unique
 
   items CartItem[]
 
@@ -72,7 +77,7 @@ model CartItem {
 
   // book or bookItem ??? 
 
-  cart   Cart @relation(fields: [cartId], references: [id])
+  cart   Cart @relation(fields: [cartId], references: [id]) // one to many
   cartId Int
 
   quantity Int
@@ -84,8 +89,8 @@ model CartItem {
 model Wishlist {
   id Int @id @default(autoincrement())
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique // one to one 
+  user   User @relation(fields: [userId], references: [id]) // one to one
+  userId Int  @unique
 
   items WishlistItem[]
 
@@ -112,8 +117,8 @@ model WishlistItem {
 model Order {
   id Int @id @default(autoincrement())
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id]) // one to many
+  userId Int
 
   token      String
   totalAmout Int
@@ -136,7 +141,7 @@ model Category {
   id Int @id @default(autoincrement())
 
   name  String @unique
-  books Book[]
+  books Book[] // one to many
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -147,6 +152,9 @@ model Comment {
 
   text String
 
+  book   Book @relation(fields: [bookId], references: [id]) // one to many
+  bookId Int
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -155,6 +163,8 @@ model Rating {
   id Int @id @default(autoincrement())
 
   rating String
+
+  books Book[] // one to many
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
