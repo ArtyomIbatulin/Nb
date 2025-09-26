@@ -19,6 +19,8 @@ model User {
   cart     Cart? // one to one 
   wishlist Wishlist? // one to one 
   orders   Order[] // one to many
+  comments Comment[] // one to many
+  ratings  Rating[] // one to many
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -155,6 +157,9 @@ model Comment {
   book   Book @relation(fields: [bookId], references: [id]) // one to many
   bookId Int
 
+  user   User @relation(fields: [userId], references: [id]) // one to many
+  userId Int
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -165,6 +170,9 @@ model Rating {
   rating String
 
   books Book[] // one to many
+
+  user   User @relation(fields: [userId], references: [id]) // one to many
+  userId Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
