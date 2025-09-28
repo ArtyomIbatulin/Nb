@@ -1,4 +1,5 @@
 const express = require("express");
+const userController = require("../controllers/userController");
 const router = express.Router();
 const multer = require("multer");
 
@@ -13,8 +14,10 @@ const storage = multer.diskStorage({
 
 const uploads = multer({ storage: storage });
 
-router.get("/register", function (req, res, next) {
-  res.send("register OK");
-});
+router.post("/api/v1/register", userController.registration);
+router.post("/api/v1/login", userController.login);
+router.get("/api/v1/user:id", userController.getUserById);
+router.get("/api/v1/current", userController.currentUser);
+router.put("/api/v1/user:id", userController.updateUser);
 
 module.exports = router;
