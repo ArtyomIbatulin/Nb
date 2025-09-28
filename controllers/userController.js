@@ -1,10 +1,10 @@
 const db = require("../models");
-// может не задеплоиться из-за bcrypt, тогда bcryptjs
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const Jdenticon = require("jdenticon");
 const path = require("path");
 const fs = require("fs");
 const { generateToken } = require("../utils/token");
+const { default: prisma } = require("../prisma/prisma-client");
 
 const registration = async (req, res) => {
   const { login, password, role, name } = req.body;
@@ -14,7 +14,7 @@ const registration = async (req, res) => {
       return res.status(400).json({ error: "Нужно ввести поля" });
     }
 
-    const candidate = await db.User.findOne({ where: { login } });
+    const candidate = await prisma.user.findUnique({ where: { login } });
 
     if (candidate) {
       return res.status(400).json({ error: "Такой логин уже существует" });
@@ -27,44 +27,23 @@ const registration = async (req, res) => {
     const avatarPath = path.join(__dirname, "../uploads", avatarName);
     fs.writeFileSync(avatarPath, png);
 
-    const user = await db.User.create({
-      login,
-      password: hashPassword,
-      role,
-      name,
-      avatarUrl: `/uploads/${avatarPath}`,
+    const user = await prisma.user.create({
+      data: {
+        login,
+        password: hashPassword,
+        role,
+        name,
+        avatarUrl: `/uploads/${avatarPath}`,
+      },
     });
 
-    const basket = await db.Basket.create({ userId: user.id });
-    const wishlist = await db.Wishlist.create({ userId: user.id });
-
-    const token = generateToken(user.id, user.role);
+    // const basket = await db.Basket.create({ userId: user.id });
+    // const wishlist = await db.Wishlist.create({ userId: user.id });
 
     return res.status(201).json(user);
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);
-  }
-};
-
-const deleteUser = async (req, res) => {
-  const id = req.params.id;
-
-  try {
-    const userId = await db.User.findOne({ where: { id } });
-    if (!userId) {
-      return res.json({ error: "Пользователь  с этим id не найден" });
-    }
-
-    // Если не хотят удаляться, попробовать soft delete
-    await db.User.destroy({ where: { id } });
-    // await db.Basket.destroy({ where: { id } });
-    // await db.Wishlist.destroy({ where: { id } });
-
-    return res.json({ message: "Пользователь успешно удален" });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
   }
 };
 
@@ -76,13 +55,10 @@ const login = async (req, res) => {
       return res.status(400).json({ error: "Нужно ввести поля" });
     }
 
-    const user = await db.User.findOne({ where: { login } });
+    const user = await prisma.user.findUnique({ where: { login } });
     if (!user) {
       return res.status(404).json({ error: "Неверный логин и/или пароль" });
     }
-
-    // token, utils token & error/message 2:02
-    // userSlice types
 
     let comparePassword = await bcrypt.compare(password, user.password);
 
@@ -135,7 +111,7 @@ const getUserById = async (req, res) => {
   }
 };
 
-const editUser = async (req, res) => {
+const updateUser = async (req, res) => {
   const id = req.params.id;
   const { login } = req.body;
 
@@ -183,13 +159,34 @@ const currentUser = async (req, res) => {
   }
 };
 
+// const deleteUser = async (req, res) => {
+//   const id = req.params.id;
+
+//   try {
+//     const userId = await db.User.findOne({ where: { id } });
+//     if (!userId) {
+//       return res.json({ error: "Пользователь  с этим id не найден" });
+//     }
+
+//     // Если не хотят удаляться, попробовать soft delete
+//     await db.User.destroy({ where: { id } });
+//     // await db.Basket.destroy({ where: { id } });
+//     // await db.Wishlist.destroy({ where: { id } });
+
+//     return res.json({ message: "Пользователь успешно удален" });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json(error);
+//   }
+// };
+
 module.exports = {
   registration,
   login,
   check,
   getUsers,
   getUserById,
-  editUser,
+  updateUser,
   currentUser,
-  deleteUser,
+  // deleteUser,
 };
