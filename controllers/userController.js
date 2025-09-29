@@ -1,4 +1,3 @@
-const db = require("../models");
 const bcrypt = require("bcryptjs");
 const Jdenticon = require("jdenticon");
 const path = require("path");
@@ -7,14 +6,14 @@ const { generateToken } = require("../utils/token");
 const { default: prisma } = require("../prisma/prisma-client");
 
 const registration = async (req, res) => {
-  const { login, password, role, name } = req.body;
+  const { email, password, role, name } = req.body;
 
   try {
-    if (!login || !password || !name) {
-      return res.status(400).json({ error: "Нужно ввести поля" });
+    if (!email || !password || !name) {
+      return res.status(400).json({ error: "Нужно ввести все поля" });
     }
 
-    const candidate = await prisma.user.findUnique({ where: { login } });
+    const candidate = await prisma.user.findUnique({ where: { email } }); //findFirst
 
     if (candidate) {
       return res.status(400).json({ error: "Такой логин уже существует" });
@@ -29,7 +28,7 @@ const registration = async (req, res) => {
 
     const user = await prisma.user.create({
       data: {
-        login,
+        email,
         password: hashPassword,
         role,
         name,
@@ -47,15 +46,15 @@ const registration = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {
-  const { login, password } = req.body;
+const email = async (req, res) => {
+  const { email, password } = req.body;
 
   try {
-    if (!login || !password) {
+    if (!email || !password) {
       return res.status(400).json({ error: "Нужно ввести поля" });
     }
 
-    const user = await prisma.user.findUnique({ where: { login } });
+    const user = await prisma.user.findUnique({ where: { email } }); //findFirst
     if (!user) {
       return res.status(404).json({ error: "Неверный логин и/или пароль" });
     }
@@ -79,25 +78,18 @@ const check = async (req, res) => {
   return res.json({ token });
 };
 
-const getUsers = async (req, res) => {
-  try {
-    const users = await db.User.findAll({
-      include: [db.Comment, db.Rating, db.Basket, db.Wishlist],
-    });
-
-    return res.json(users);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json(error);
-  }
-};
-
 const getUserById = async (req, res) => {
   const { id } = req.params;
+  // const { id } = req.params.id;  ???
+  // const userId = req.user.userId
 
   try {
-    const user = await db.User.findOne({
+    const user = await prisma.user.findUnique({
       where: { id },
+      // include: {
+      // cart: true,
+      // wishlist: true
+      // }
     });
 
     if (!user) {
@@ -112,29 +104,39 @@ const getUserById = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const id = req.params.id;
-  const { login } = req.body;
+  const id = req.params;
+  // const { id } = req.params.id;  ???
+  const { email, name } = req.body;
+
+  let filePath;
+
+  if (req.file && req.file.path) {
+    filePath = req.file.path;
+  }
+
+  if (id !== req.user.userId) {
+    return res.status(403).json({ error: "Нет доступа" });
+  }
 
   try {
-    const user = await db.User.findOne({ where: { id } });
-    if (!user) {
-      return res.status(404).json({ error: "Пользователь не найден" });
+    if (email) {
+      const existingUser = await prisma.user.findFirst({ where: { email } });
+
+      if (existingUser && existingUser.id !== id) {
+        return res.status(400).json({ error: "Такая почта уже занята" });
+      }
     }
 
-    const existingLogin = await db.User.findOne({ where: { login } });
-
-    if (existingLogin && user.id !== id) {
-      return res.status(400).json({ error: "Такой логин уже занят" });
-    }
-
-    await db.User.update(
-      {
-        login: login || undefined,
+    const user = await prisma.user.update({
+      where: { id },
+      data: {
+        email: email || undefined,
+        name: name || undefined,
+        avatarUrl: filePath ? `/${filePath}` : undefined,
       },
-      { where: { id } }
-    );
+    });
 
-    return res.json({ message: "Пользователь изменен" });
+    return res.json(user);
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);
@@ -143,10 +145,13 @@ const updateUser = async (req, res) => {
 
 const currentUser = async (req, res) => {
   try {
-    const user = await db.User.findOne({
-      where: { id: req.user.id },
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+      // include: {
+      //   cart: true,
+      //   wishlist: true,
+      // },
     });
-    // +include
 
     if (!user) {
       return res.status(404).json({ error: "Пользователь не найден" });
@@ -158,6 +163,19 @@ const currentUser = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+
+// const getUsers = async (req, res) => {
+//   try {
+//     const users = await db.User.findAll({
+//       include: [db.Comment, db.Rating, db.Basket, db.Wishlist],
+//     });
+
+//     return res.json(users);
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json(error);
+//   }
+// };
 
 // const deleteUser = async (req, res) => {
 //   const id = req.params.id;
@@ -182,9 +200,9 @@ const currentUser = async (req, res) => {
 
 module.exports = {
   registration,
-  login,
+  email,
   check,
-  getUsers,
+  // getUsers,
   getUserById,
   updateUser,
   currentUser,
