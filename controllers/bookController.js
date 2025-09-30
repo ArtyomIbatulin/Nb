@@ -9,7 +9,7 @@ const uuid = require("uuid");
 const path = require("path");
 
 const createBook = async (req, res) => {
-  const { name, price, description } = req.body; // + author, category, etc
+  const { name, price, description } = req.body; // + author, category, rating
   const { imgUrl } = req.files;
 
   if (!name || !price || !description || !imgUrl) {
@@ -87,27 +87,26 @@ const findBookById = async (req, res) => {
   }
 };
 
-const putBookById = async (req, res) => {
-  const id = req.params.id;
-  const { name, price, description, img } = req.body;
+const editBookById = async (req, res) => {
+  const { id } = req.params;
+  const { name, price, description, img } = req.body; // comments, etc
 
   try {
-    const bookId = await Book.findOne({ where: { id } });
-    if (!bookId) {
-      return res.json({ error: "Книга с этим id не найдена" });
-    }
-
-    await Book.update(
-      {
+    const book = await prisma.book.update({
+      where: { id },
+      data: {
         name,
         price,
         description,
-        img,
+        img, // change new path ?
       },
-      { where: { id } }
-    );
+    });
 
-    return res.json({ message: "Книга изменена" });
+    if (!book) {
+      return res.status(404).json({ error: "Книга с этим id не найдена" });
+    }
+
+    return res.json(book, { message: "Книга изменена" });
   } catch (error) {
     console.log(error);
     res.status(500).json(error);
@@ -115,18 +114,24 @@ const putBookById = async (req, res) => {
 };
 
 const deleteBook = async (req, res) => {
-  // вместе с книгой удалять ее лайки, комменты и все, что с ней связано
-  const id = req.params.id;
+  // вместе с книгой удалять ее лайки, комменты и все, что с ней связано - $transaction
+  const { id } = req.params;
 
   try {
-    const bookId = await Book.findOne({ where: { id } });
-    if (!bookId) {
+    const book = await prisma.book.findUnique({ where: { id } });
+
+    if (!book) {
       return res.json({ error: "Книга с этим id не найдена" });
     }
 
-    await Book.destroy({ where: { id } });
+    const deletedBook = await prisma.$transaction([
+      prisma.comment.deleteMany({ where: { bookId: id } }),
+      prisma.rating.deleteMany({ where: { bookId: id } }),
+      prisma.book.delete({ where: { id } }),
+      // author, category ?
+    ]);
 
-    return res.json({ message: "Книга успешно удалена" });
+    return res.json(deletedBook, { message: "Книга успешно удалена" });
   } catch (error) {
     console.log(error);
     res.status(500).json(error);
@@ -138,5 +143,5 @@ module.exports = {
   deleteBook,
   findAllBooks,
   findBookById,
-  putBookById,
+  editBookById,
 };
