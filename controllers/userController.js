@@ -46,7 +46,7 @@ const registration = async (req, res) => {
   }
 };
 
-const email = async (req, res) => {
+const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -80,7 +80,6 @@ const check = async (req, res) => {
 
 const getUserById = async (req, res) => {
   const { id } = req.params;
-  // const { id } = req.params.id;  ???
   // const userId = req.user.userId
 
   try {
@@ -104,8 +103,7 @@ const getUserById = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const id = req.params;
-  // const { id } = req.params.id;  ???
+  const { id } = req.params;
   const { email, name } = req.body;
 
   let filePath;
@@ -164,6 +162,31 @@ const currentUser = async (req, res) => {
   }
 };
 
+const deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await prisma.user.findUnique({ where: { id } });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: "Пользователь  с этим id не найден" });
+    }
+
+    const deletedUser = await prisma.$transaction([
+      prisma.cart.deleteMany({ where: { userId: id } }),
+      prisma.wishlist.deleteMany({ where: { userId: id } }),
+      prisma.user.delete({ where: { id } }),
+    ]);
+
+    return res.json(deletedUser, { message: "Пользователь успешно удален" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+};
+
 // const getUsers = async (req, res) => {
 //   try {
 //     const users = await db.User.findAll({
@@ -177,34 +200,13 @@ const currentUser = async (req, res) => {
 //   }
 // };
 
-// const deleteUser = async (req, res) => {
-//   const id = req.params.id;
-
-//   try {
-//     const userId = await db.User.findOne({ where: { id } });
-//     if (!userId) {
-//       return res.json({ error: "Пользователь  с этим id не найден" });
-//     }
-
-//     // Если не хотят удаляться, попробовать soft delete
-//     await db.User.destroy({ where: { id } });
-//     // await db.Basket.destroy({ where: { id } });
-//     // await db.Wishlist.destroy({ where: { id } });
-
-//     return res.json({ message: "Пользователь успешно удален" });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json(error);
-//   }
-// };
-
 module.exports = {
   registration,
-  email,
+  login,
   check,
-  // getUsers,
   getUserById,
   updateUser,
   currentUser,
-  // deleteUser,
+  deleteUser,
+  // getUsers,
 };
