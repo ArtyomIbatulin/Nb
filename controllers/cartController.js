@@ -50,24 +50,24 @@ const findOrdersAll = async (req, res) => {
   }
 };
 
-const findOrder = async (req, res) => {
-  const id = req.params.id;
+// const findOrder = async (req, res) => {
+//   const id = req.params.id;
 
-  try {
-    const orderId = await db.Orders.findOne({ where: { id } });
+//   try {
+//     const orderId = await db.Orders.findOne({ where: { id } });
 
-    if (!orderId) {
-      return res.json({ error: "Покупка с этим id не найдена" });
-    }
+//     if (!orderId) {
+//       return res.json({ error: "Покупка с этим id не найдена" });
+//     }
 
-    const order = await db.Orders.findOne({ where: { id } });
+//     const order = await db.Orders.findOne({ where: { id } });
 
-    return res.json(order);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
-  }
-};
+//     return res.json(order);
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json(error);
+//   }
+// };
 
 const putOrder = async (req, res) => {
   const id = req.params.id;
@@ -98,6 +98,6 @@ module.exports = {
   createOrder,
   deleteOrder,
   findOrdersAll,
-  findOrder,
+  // findOrder,
   putOrder,
 };
