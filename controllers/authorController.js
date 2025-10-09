@@ -15,23 +15,23 @@ const createAuthor = async (req, res) => {
   }
 };
 
-// const deleteAuthor = async (req, res) => {
-//   const id = req.params.id;
+const deleteAuthor = async (req, res) => {
+  const id = req.params.id;
 
-//   try {
-//     const authorId = await db.Author.findOne({ where: { id } });
-//     if (!authorId) {
-//       return res.json({ error: "Автор с этим id не найден" });
-//     }
+  try {
+    const authorId = await db.Author.findOne({ where: { id } });
+    if (!authorId) {
+      return res.json({ error: "Автор с этим id не найден" });
+    }
 
-//     await db.Author.destroy({ where: { id } });
+    await db.Author.destroy({ where: { id } });
 
-//     return res.json({ message: "Автор успешно удален" });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json(error);
-//   }
-// };
+    return res.json({ message: "Автор успешно удален" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+};
 
 const findAuthors = async (req, res) => {
   try {
@@ -92,7 +92,7 @@ const putAuthor = async (req, res) => {
 
 module.exports = {
   createAuthor,
-  // deleteAuthor,
+  deleteAuthor,
   findAuthors,
   findAuthor,
   putAuthor,
