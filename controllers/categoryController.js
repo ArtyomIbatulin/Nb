@@ -1,6 +1,7 @@
 const db = require("../models");
 
 const createCategory = async (req, res) => {
+  // при создании книги
   const { name } = req.body;
 
   try {
