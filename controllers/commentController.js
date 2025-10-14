@@ -1,28 +1,28 @@
 const db = require("../models");
 
-const createComment = async (req, res) => {
-  const { text, date, bookId } = req.body;
-  const userId = req.user.id;
+// const createComment = async (req, res) => {
+//   const { text, date, bookId } = req.body;
+//   const userId = req.user.id;
 
-  if (!text || !bookId) {
-    return res.status(400).json({ error: "Введите комментарий" });
-  }
+//   if (!text || !bookId) {
+//     return res.status(400).json({ error: "Введите комментарий" });
+//   }
 
-  try {
-    const comment = await db.Comment.create({
-      BookId: bookId,
-      text,
-      // автогенерация даты
-      date: date || undefined,
-      UserId: userId,
-    });
+//   try {
+//     const comment = await db.Comment.create({
+//       BookId: bookId,
+//       text,
+//       // автогенерация даты
+//       date: date || undefined,
+//       UserId: userId,
+//     });
 
-    return res.status(201).json(comment);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
-  }
-};
+//     return res.status(201).json(comment);
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json(error);
+//   }
+// };
 
 const deleteComment = async (req, res) => {
   // проверить, что не удаляет чужие комментарии
@@ -108,7 +108,7 @@ const putComment = async (req, res) => {
 };
 
 module.exports = {
-  createComment,
+  // createComment,
   deleteComment,
   findAllComments,
   findCommentById,
