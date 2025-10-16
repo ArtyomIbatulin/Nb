@@ -62,25 +62,25 @@ const findAllComments = async (req, res) => {
   }
 };
 
-const findCommentById = async (req, res) => {
-  // нужен ли userId ???
-  const id = req.params.id;
+// const findCommentById = async (req, res) => {
+//   // нужен ли userId ???
+//   const id = req.params.id;
 
-  try {
-    const commentId = await db.Comment.findOne({ where: { id } });
+//   try {
+//     const commentId = await db.Comment.findOne({ where: { id } });
 
-    if (!commentId) {
-      return res.status(404).json({ error: "Комментарий с этим id не найден" });
-    }
+//     if (!commentId) {
+//       return res.status(404).json({ error: "Комментарий с этим id не найден" });
+//     }
 
-    const comment = await db.Comment.findOne({ where: { id } });
+//     const comment = await db.Comment.findOne({ where: { id } });
 
-    return res.json(comment);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
-  }
-};
+//     return res.json(comment);
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json(error);
+//   }
+// };
 
 const putComment = async (req, res) => {
   const id = req.params.id;
@@ -111,6 +111,6 @@ module.exports = {
   // createComment,
   deleteComment,
   findAllComments,
-  findCommentById,
+  // findCommentById,
   putComment,
 };
