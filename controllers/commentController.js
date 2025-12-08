@@ -26,7 +26,7 @@ const db = require("../models");
 
 const deleteComment = async (req, res) => {
   // проверить, что не удаляет чужие комментарии
-  const id = req.params.id;
+  const { id } = req.params;
 
   try {
     const comment = await db.Comment.findOne({ where: { id } });
