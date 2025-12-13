@@ -31,12 +31,8 @@ model User {
   // comments Comment[] // one to many
   // ratings  Rating[] // one to many
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  cart      Cart?
-  wishlist  Wishlist?
-  orders    Order[]
-  ratings   Rating[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Follows {
@@ -47,169 +43,176 @@ model Follows {
   followingId Int // String, но надо менять Int в User
 }
 
-model Like {
-  user    User?   @relation(fields: [userId], references: [id])
-  userId  Int?
-  isLiked Boolean
-}
-
 model Post {
-  user    User?  @relation(fields: [userId], references: [id])
-  userId  Int?
-  content String
+  id        Int       @id @default(autoincrement())
+  content   String
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  Int
+  likes     Like[]
+  comments  Comment[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
-model Book {
-  id Int @id @default(autoincrement())
-
-  name        String
-  imgUrl      String
-  price       String
-  description String
-
-  category   Category @relation(fields: [categoryId], references: [id]) // one to many
-  categoryId Int
-
-  comments Comment[] // one to many
-
-  rating   Rating @relation(fields: [ratingId], references: [id]) // one to many
-  ratingId Int
-
-  authors Author[] //many to many
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Author {
-  id Int @id @default(autoincrement())
-
-  name String @unique
-
-  books Book[] // many to many
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Cart {
-  id Int @id @default(autoincrement())
-
-  user   User @relation(fields: [userId], references: [id]) // one to one
-  userId Int  @unique
-
-  items CartItem[]
-
-  totalAmount Int    @default(0)
-  token       String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model CartItem {
-  id Int @id @default(autoincrement())
-
-  // book or bookItem ??? 
-
-  cart   Cart @relation(fields: [cartId], references: [id]) // one to many
-  cartId Int
-
-  quantity Int
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Wishlist {
-  id Int @id @default(autoincrement())
-
-  user   User @relation(fields: [userId], references: [id]) // one to one
-  userId Int  @unique
-
-  items WishlistItem[]
-
-  //  token      String ???
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model WishlistItem {
-  id Int @id @default(autoincrement())
-
-  // book or bookItem ??? 
-
-  wishlist   Wishlist @relation(fields: [wishlistId], references: [id])
-  wishlistId Int
-
-  quantity Int
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Order {
-  id Int @id @default(autoincrement())
-
-  user   User @relation(fields: [userId], references: [id]) // one to many
-  userId Int
-
-  token      String
-  totalAmout Int
-  status     Status
-  paymentId  String?
-
-  items Json // список товаров в заказе 
-
-  name    String
-  email   String
-  phone   String
-  address String
-  comment String? // инфа о заказчике со страницы оформления заказа 
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Category {
-  id Int @id @default(autoincrement())
-
-  name  String @unique
-  books Book[] // one to many
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Like {
+  id     Int   @id @default(autoincrement())
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
+  post   Post? @relation(fields: [postId], references: [id])
+  postId Int?
 }
 
 model Comment {
   id Int @id @default(autoincrement())
 
-  text String
-
-  book   Book @relation(fields: [bookId], references: [id]) // one to many
-  bookId Int
+  content String
 
   user   User @relation(fields: [userId], references: [id]) // one to many
   userId Int
+
+  post   Post @relation(fields: [postId], references: [id]) // one to many
+  postId Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Rating {
-  id Int @id @default(autoincrement())
+// model Book {
+//   id Int @id @default(autoincrement())
 
-  rating String
+//   name        String
+//   imgUrl      String
+//   price       String
+//   description String
 
-  books Book[] // one to many
+//   category   Category @relation(fields: [categoryId], references: [id]) // one to many
+//   categoryId Int
 
-  user   User @relation(fields: [userId], references: [id]) // one to many
-  userId Int
+//   comments Comment[] // one to many
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+//   rating   Rating @relation(fields: [ratingId], references: [id]) // one to many
+//   ratingId Int
+
+//   authors Author[] //many to many
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model Author {
+//   id Int @id @default(autoincrement())
+
+//   name String @unique
+
+//   books Book[] // many to many
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model Cart {
+//   id Int @id @default(autoincrement())
+
+//   user   User @relation(fields: [userId], references: [id]) // one to one
+//   userId Int  @unique
+
+//   items CartItem[]
+
+//   totalAmount Int    @default(0)
+//   token       String
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model CartItem {
+//   id Int @id @default(autoincrement())
+
+//   // book or bookItem ??? 
+
+//   cart   Cart @relation(fields: [cartId], references: [id]) // one to many
+//   cartId Int
+
+//   quantity Int
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model Wishlist {
+//   id Int @id @default(autoincrement())
+
+//   user   User @relation(fields: [userId], references: [id]) // one to one
+//   userId Int  @unique
+
+//   items WishlistItem[]
+
+//   //  token      String ???
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model WishlistItem {
+//   id Int @id @default(autoincrement())
+
+//   // book or bookItem ??? 
+
+//   wishlist   Wishlist @relation(fields: [wishlistId], references: [id])
+//   wishlistId Int
+
+//   quantity Int
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model Order {
+//   id Int @id @default(autoincrement())
+
+//   user   User @relation(fields: [userId], references: [id]) // one to many
+//   userId Int
+
+//   token      String
+//   totalAmout Int
+//   status     Status
+//   paymentId  String?
+
+//   items Json // список товаров в заказе 
+
+//   name    String
+//   email   String
+//   phone   String
+//   address String
+//   comment String? // инфа о заказчике со страницы оформления заказа 
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model Category {
+//   id Int @id @default(autoincrement())
+
+//   name  String @unique
+//   books Book[] // one to many
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model Rating {
+//   id Int @id @default(autoincrement())
+
+//   rating String
+
+//   books Book[] // one to many
+
+//   user   User @relation(fields: [userId], references: [id]) // one to many
+//   userId Int
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
 
 enum Role {
   USER
