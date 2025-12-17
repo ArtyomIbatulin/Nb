@@ -80,22 +80,28 @@ const check = async (req, res) => {
 
 const getUserById = async (req, res) => {
   const { id } = req.params;
-  // const userId = req.user.userId
+  const userId = req.user.userId;
 
   try {
     const user = await prisma.user.findUnique({
       where: { id },
-      // include: {
-      // cart: true,
-      // wishlist: true
-      // }
+      include: {
+        followers: true,
+        following: true,
+      },
     });
 
     if (!user) {
       return res.status(404).json({ error: "Пользователь не найден" });
     }
 
-    return res.json(user);
+    const isFollowing = await prisma.follows.findFirst({
+      where: {
+        AND: [{ followerId: userId }, { followingId: id }],
+      },
+    });
+
+    return res.json({ ...user, isFollowing: Boolean(isFollowing) });
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);
