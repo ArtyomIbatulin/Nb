@@ -110,7 +110,7 @@ const getUserById = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const { id } = req.params;
-  const { email, name } = req.body;
+  const { email, name, bio, location, dateOfBirth } = req.body;
 
   let filePath;
 
@@ -137,6 +137,9 @@ const updateUser = async (req, res) => {
         email: email || undefined,
         name: name || undefined,
         avatarUrl: filePath ? `/${filePath}` : undefined,
+        bio: bio || undefined,
+        location: location || undefined,
+        dateOfBirth: dateOfBirth || undefined,
       },
     });
 
