@@ -154,10 +154,18 @@ const currentUser = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user.userId },
-      // include: {
-      //   cart: true,
-      //   wishlist: true,
-      // },
+      include: {
+        followers: {
+          include: {
+            follower: true,
+          },
+        },
+        following: {
+          include: {
+            following: true,
+          },
+        },
+      },
     });
 
     if (!user) {
