@@ -1,6 +1,7 @@
 const express = require("express");
 const userController = require("../controllers/userController");
 const bookController = require("../controllers/bookController");
+const postController = require("../controllers/postController");
 const router = express.Router();
 const multer = require("multer");
 const authMiddleware = require("../middleware/authMiddleware");
@@ -27,5 +28,10 @@ router.get("/api/v1/books", bookController.findAllBooks);
 router.get("/api/v1/books/:id", bookController.findBookById);
 router.delete("/api/v1/books/:id", bookController.deleteBook); // add check admin
 router.put("/api/v1/books/:id", bookController.putBookById); // add check admin
+
+router.post("/api/v1/posts", authMiddleware, postController.createPost);
+router.get("/api/v1/posts", authMiddleware, postController.getAllPosts);
+router.get("/api/v1/posts/:id", authMiddleware, postController.getPostById);
+router.delete("/api/v1/posts/:id", authMiddleware, postController.deletePost);
 
 module.exports = router;
