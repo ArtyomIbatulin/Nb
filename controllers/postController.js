@@ -18,9 +18,31 @@ const createPost = async (req, res) => {
 
     return res.status(201).json(post, { message: "Пост создан" });
   } catch (error) {
-    console.log(error);
+    console.log(error, "error: createPost");
     return res.status(500).json(error);
   }
 };
 
-module.exports = { createPost };
+const getAllPosts = async (req, res) => {
+  const userId = req.user.userId;
+
+  try {
+    const posts = await prisma.post.findMany({
+      include: {
+        likes: true,
+        author: true,
+        comments: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return res.json(posts, userId);
+  } catch (error) {
+    console.log(error, "error: getAllPosts");
+    return res.status(500).json(error);
+  }
+};
+
+module.exports = { createPost, getAllPosts };
