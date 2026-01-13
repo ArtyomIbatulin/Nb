@@ -50,4 +50,50 @@ const getAllPosts = async (req, res) => {
   }
 };
 
-module.exports = { createPost, getAllPosts };
+const getPostById = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.userId;
+
+  try {
+    const post = await prisma.post.findUnique({
+      where: { id },
+      include: {
+        comments: {
+          include: {
+            user: true,
+          },
+        },
+        likes: true,
+        author: true,
+      },
+    });
+
+    if (!post) {
+      res.status(404).json({ error: "Пост не найден" });
+    }
+
+    const postWithLikeInfo = {
+      ...post,
+      likedByUser: post.likes.some((like) => like.userId === userId),
+    };
+
+    return res.json(postWithLikeInfo);
+  } catch (error) {
+    console.log(error, "error: getPostById");
+    return res.status(500).json(error);
+  }
+};
+
+const deletePost = async (req, res) => {
+  const {} = req.body;
+  const authorId = req.user.userId;
+
+  try {
+    return res;
+  } catch (error) {
+    console.log(error, "error: deletePost");
+    return res.status(500).json(error);
+  }
+};
+
+module.exports = { createPost, getAllPosts, deletePost, getPostById };
