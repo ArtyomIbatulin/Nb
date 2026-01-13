@@ -38,7 +38,12 @@ const getAllPosts = async (req, res) => {
       },
     });
 
-    return res.json(posts, userId);
+    const postWithLikeInfo = posts.map((post) => ({
+      ...post,
+      likedByUser: post.likes.some((like) => like.userId === userId),
+    }));
+
+    return res.json(postWithLikeInfo);
   } catch (error) {
     console.log(error, "error: getAllPosts");
     return res.status(500).json(error);
