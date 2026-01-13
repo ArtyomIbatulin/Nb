@@ -85,11 +85,26 @@ const getPostById = async (req, res) => {
 };
 
 const deletePost = async (req, res) => {
-  const {} = req.body;
-  const authorId = req.user.userId;
+  const { id } = req.params;
+
+  const post = await prisma.post.findUnique({ where: { id } });
+
+  if (!post) {
+    res.status(404).json({ error: "Пост не найден" });
+  }
+
+  if (post.authorId !== req.userId) {
+    res.status(403).json({ error: "Нет доступа" });
+  }
 
   try {
-    return res;
+    const transaction = await prisma.$transaction([
+      prisma.comment.deleteMany({ where: { postId: id } }),
+      prisma.like.deleteMany({ where: { postId: id } }),
+      prisma.post.delete({ where: { id } }),
+    ]);
+
+    return res.json(transaction);
   } catch (error) {
     console.log(error, "error: deletePost");
     return res.status(500).json(error);
