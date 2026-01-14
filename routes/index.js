@@ -2,6 +2,7 @@ const express = require("express");
 const userController = require("../controllers/userController");
 const bookController = require("../controllers/bookController");
 const postController = require("../controllers/postController");
+const commentController = require("../controllers/commentController");
 const router = express.Router();
 const multer = require("multer");
 const authMiddleware = require("../middleware/authMiddleware");
@@ -33,5 +34,16 @@ router.post("/api/v1/posts", authMiddleware, postController.createPost);
 router.get("/api/v1/posts", authMiddleware, postController.getAllPosts);
 router.get("/api/v1/posts/:id", authMiddleware, postController.getPostById);
 router.delete("/api/v1/posts/:id", authMiddleware, postController.deletePost);
+
+router.post(
+  "/api/v1/comments",
+  authMiddleware,
+  commentController.createComment
+);
+router.delete(
+  "/api/v1/comments/:id",
+  authMiddleware,
+  commentController.deleteComment
+);
 
 module.exports = router;
