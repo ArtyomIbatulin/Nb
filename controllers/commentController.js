@@ -24,6 +24,26 @@ const createComment = async (req, res) => {
   }
 };
 
-const deleteComment = async (req, res) => {};
+const deleteComment = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.userId;
+
+  try {
+    const comment = await prisma.comment.findUnique({ where: { id } });
+    if (!comment) {
+      return res.status(404).json({ message: "Комментарий не найден" });
+    }
+    if (comment.userId !== userId) {
+      return res.status(403).json({ message: "Нет доступа" });
+    }
+
+    const deletedComment = await prisma.comment.delete({ where: { id } });
+
+    res.json(deletedComment);
+  } catch (error) {
+    console.log(error, "error: deleteComment");
+    return res.status(500).json(error);
+  }
+};
 
 module.exports = { createComment, deleteComment };
