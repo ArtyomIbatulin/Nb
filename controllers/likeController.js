@@ -31,7 +31,25 @@ const likePost = async (req, res) => {
 };
 
 const unlikePost = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.userId;
+
+  if (!id) {
+    return res.status(400).json({ message: "Вы уже ставили дизлайк" });
+  }
   try {
+    const existingLike = await prisma.like.findFirst({
+      where: { postId: id, userId },
+    });
+    if (!existingLike) {
+      return res.status(400).json({ message: " Нельзя поставить дизлайк" });
+    }
+
+    const like = await prisma.like.deleteMany({
+      where: { postId: id, userId },
+    });
+
+    return res.json(like);
   } catch (error) {
     console.log(error, "error: unlikePost");
     return res.status(500).json(error);
