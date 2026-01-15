@@ -4,6 +4,7 @@ const bookController = require("../controllers/bookController");
 const postController = require("../controllers/postController");
 const commentController = require("../controllers/commentController");
 const likeController = require("../controllers/likeController");
+const followController = require("../controllers/followController");
 const router = express.Router();
 const multer = require("multer");
 const authMiddleware = require("../middleware/authMiddleware");
@@ -49,5 +50,12 @@ router.delete(
 
 router.post("/api/v1/likes", authMiddleware, likeController.likePost);
 router.delete("/api/v1/likes/:id", authMiddleware, likeController.unlikePost);
+
+router.post("/api/v1/follow", authMiddleware, followController.followUser);
+router.delete(
+  "/api/v1/unfollow/:id",
+  authMiddleware,
+  followController.unfollowUser
+);
 
 module.exports = router;
