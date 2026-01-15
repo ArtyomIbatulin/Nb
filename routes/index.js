@@ -3,6 +3,7 @@ const userController = require("../controllers/userController");
 const bookController = require("../controllers/bookController");
 const postController = require("../controllers/postController");
 const commentController = require("../controllers/commentController");
+const likeController = require("../controllers/likeController");
 const router = express.Router();
 const multer = require("multer");
 const authMiddleware = require("../middleware/authMiddleware");
@@ -45,5 +46,8 @@ router.delete(
   authMiddleware,
   commentController.deleteComment
 );
+
+router.post("/api/v1/likes", authMiddleware, likeController.likePost);
+router.delete("/api/v1/likes/:id", authMiddleware, likeController.unlikePost);
 
 module.exports = router;
