@@ -1,4 +1,5 @@
-const { default: prisma } = require("../prisma/prisma-client");
+// const { default: prisma } = require("../prisma/prisma-client");
+const prisma = require("../prisma/prisma-client");
 
 const followUser = async (req, res) => {
   const { followingId } = req.body;

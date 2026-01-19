@@ -3,7 +3,8 @@ const Jdenticon = require("jdenticon");
 const path = require("path");
 const fs = require("fs");
 const { generateToken } = require("../utils/token");
-const { default: prisma } = require("../prisma/prisma-client");
+// const { default: prisma } = require("../prisma/prisma-client");
+const prisma = require("../prisma/prisma-client");
 
 const registration = async (req, res) => {
   const { email, password, role, name } = req.body;

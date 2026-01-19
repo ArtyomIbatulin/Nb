@@ -1,4 +1,5 @@
-const { default: prisma } = require("../prisma/prisma-client");
+// const { default: prisma } = require("../prisma/prisma-client");
+const prisma = require("../prisma/prisma-client");
 
 const createPost = async (req, res) => {
   const { content } = req.body;
