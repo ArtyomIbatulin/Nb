@@ -26,11 +26,11 @@ router.get("/api/v1/users:id", authMiddleware, userController.getUserById);
 router.get("/api/v1/current", authMiddleware, userController.currentUser);
 router.put("/api/v1/users:id", authMiddleware, userController.updateUser);
 
-router.post("/api/v1/books", bookController.createBook); // add check admin
-router.get("/api/v1/books", bookController.findAllBooks);
-router.get("/api/v1/books/:id", bookController.findBookById);
-router.delete("/api/v1/books/:id", bookController.deleteBook); // add check admin
-router.put("/api/v1/books/:id", bookController.putBookById); // add check admin
+// router.post("/api/v1/books", bookController.createBook); // add check admin
+// router.get("/api/v1/books", bookController.findAllBooks);
+// router.get("/api/v1/books/:id", bookController.findBookById);
+// router.delete("/api/v1/books/:id", bookController.deleteBook); // add check admin
+// router.put("/api/v1/books/:id", bookController.putBookById); // add check admin
 
 router.post("/api/v1/posts", authMiddleware, postController.createPost);
 router.get("/api/v1/posts", authMiddleware, postController.getAllPosts);
@@ -40,12 +40,12 @@ router.delete("/api/v1/posts/:id", authMiddleware, postController.deletePost);
 router.post(
   "/api/v1/comments",
   authMiddleware,
-  commentController.createComment
+  commentController.createComment,
 );
 router.delete(
   "/api/v1/comments/:id",
   authMiddleware,
-  commentController.deleteComment
+  commentController.deleteComment,
 );
 
 router.post("/api/v1/likes", authMiddleware, likeController.likePost);
@@ -55,7 +55,7 @@ router.post("/api/v1/follow", authMiddleware, followController.followUser);
 router.delete(
   "/api/v1/unfollow/:id",
   authMiddleware,
-  followController.unfollowUser
+  followController.unfollowUser,
 );
 
 module.exports = router;
