@@ -16,7 +16,7 @@ app.use(cookieParser());
 
 app.use("/uploads", express.static("uploads"));
 
-app.use("/api", require("./routes"));
+app.use("/api/v1", require("./routes"));
 
 if (!fs.existsSync("uploads")) {
   fs.mkdirSync("uploads");

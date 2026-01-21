@@ -20,42 +20,30 @@ const storage = multer.diskStorage({
 
 const uploads = multer({ storage: storage });
 
-router.post("/api/v1/register", userController.registration);
-router.post("/api/v1/login", userController.login);
-router.get("/api/v1/users:id", authMiddleware, userController.getUserById);
-router.get("/api/v1/current", authMiddleware, userController.currentUser);
-router.put("/api/v1/users:id", authMiddleware, userController.updateUser);
+router.post("/register", userController.registration);
+router.post("/login", userController.login);
+router.get("/users:id", authMiddleware, userController.getUserById);
+router.get("/current", authMiddleware, userController.currentUser);
+router.put("/users:id", authMiddleware, userController.updateUser);
 
-// router.post("/api/v1/books", bookController.createBook); // add check admin
-// router.get("/api/v1/books", bookController.findAllBooks);
-// router.get("/api/v1/books/:id", bookController.findBookById);
-// router.delete("/api/v1/books/:id", bookController.deleteBook); // add check admin
-// router.put("/api/v1/books/:id", bookController.putBookById); // add check admin
+// router.post("/books", bookController.createBook); // add check admin
+// router.get("/books", bookController.findAllBooks);
+// router.get("/books/:id", bookController.findBookById);
+// router.delete("/books/:id", bookController.deleteBook); // add check admin
+// router.put("/books/:id", bookController.putBookById); // add check admin
 
-router.post("/api/v1/posts", authMiddleware, postController.createPost);
-router.get("/api/v1/posts", authMiddleware, postController.getAllPosts);
-router.get("/api/v1/posts/:id", authMiddleware, postController.getPostById);
-router.delete("/api/v1/posts/:id", authMiddleware, postController.deletePost);
+router.post("/posts", authMiddleware, postController.createPost);
+router.get("/posts", authMiddleware, postController.getAllPosts);
+router.get("/posts/:id", authMiddleware, postController.getPostById);
+router.delete("/posts/:id", authMiddleware, postController.deletePost);
 
-router.post(
-  "/api/v1/comments",
-  authMiddleware,
-  commentController.createComment,
-);
-router.delete(
-  "/api/v1/comments/:id",
-  authMiddleware,
-  commentController.deleteComment,
-);
+router.post("/comments", authMiddleware, commentController.createComment);
+router.delete("/comments/:id", authMiddleware, commentController.deleteComment);
 
-router.post("/api/v1/likes", authMiddleware, likeController.likePost);
-router.delete("/api/v1/likes/:id", authMiddleware, likeController.unlikePost);
+router.post("/likes", authMiddleware, likeController.likePost);
+router.delete("/likes/:id", authMiddleware, likeController.unlikePost);
 
-router.post("/api/v1/follow", authMiddleware, followController.followUser);
-router.delete(
-  "/api/v1/unfollow/:id",
-  authMiddleware,
-  followController.unfollowUser,
-);
+router.post("/follow", authMiddleware, followController.followUser);
+router.delete("/unfollow/:id", authMiddleware, followController.unfollowUser);
 
 module.exports = router;
