@@ -14,7 +14,7 @@ const registration = async (req, res) => {
       return res.status(400).json({ error: "Нужно ввести все поля" });
     }
 
-    const candidate = await prisma.user.findUnique({ where: { email } }); //findFirst
+    const candidate = await prisma.user.findUnique({ where: { email } });
 
     if (candidate) {
       return res.status(400).json({ error: "Такой логин уже существует" });
@@ -55,7 +55,7 @@ const login = async (req, res) => {
       return res.status(400).json({ error: "Нужно ввести поля" });
     }
 
-    const user = await prisma.user.findUnique({ where: { email } }); //findFirst
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
       return res.status(404).json({ error: "Неверный логин и/или пароль" });
     }
