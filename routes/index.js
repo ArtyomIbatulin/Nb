@@ -22,9 +22,10 @@ const uploads = multer({ storage: storage });
 
 router.post("/register", userController.registration);
 router.post("/login", userController.login);
-router.get("/users:id", authMiddleware, userController.getUserById);
+router.get("/users", authMiddleware, userController.getAllUsers);
+router.get("/users/:id", authMiddleware, userController.getUserById);
 router.get("/current", authMiddleware, userController.currentUser);
-router.put("/users:id", authMiddleware, userController.updateUser);
+router.put("/users/:id", authMiddleware, userController.updateUser);
 
 // router.post("/books", bookController.createBook); // add check admin
 // router.get("/books", bookController.findAllBooks);
