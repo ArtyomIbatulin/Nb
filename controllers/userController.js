@@ -3,7 +3,6 @@ const Jdenticon = require("jdenticon");
 const path = require("path");
 const fs = require("fs");
 const { generateToken } = require("../utils/token");
-// const { default: prisma } = require("../prisma/prisma-client");
 const prisma = require("../prisma/prisma-client");
 
 const registration = async (req, res) => {
@@ -42,7 +41,7 @@ const registration = async (req, res) => {
 
     return res.status(201).json(user);
   } catch (error) {
-    console.log(error);
+    console.log(error, "registration");
     return res.status(500).json(error);
   }
 };
@@ -69,7 +68,7 @@ const login = async (req, res) => {
 
     return res.json({ token });
   } catch (error) {
-    console.log(error);
+    console.log(error, "login");
     return res.status(500).json(error);
   }
 };
@@ -77,6 +76,30 @@ const login = async (req, res) => {
 const check = async (req, res) => {
   const token = generateToken(req.user.id, req.user.role);
   return res.json({ token });
+};
+
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      include: {
+        followers: {
+          include: {
+            follower: true,
+          },
+        },
+        following: {
+          include: {
+            following: true,
+          },
+        },
+      },
+    });
+
+    return res.json(users);
+  } catch (error) {
+    console.log(error, "getAllUsers");
+    return res.status(500).json(error);
+  }
 };
 
 const getUserById = async (req, res) => {
@@ -104,7 +127,7 @@ const getUserById = async (req, res) => {
 
     return res.json({ ...user, isFollowing: Boolean(isFollowing) });
   } catch (error) {
-    console.log(error);
+    console.log(error, "getUserById");
     return res.status(500).json(error);
   }
 };
@@ -146,7 +169,7 @@ const updateUser = async (req, res) => {
 
     return res.json(user);
   } catch (error) {
-    console.log(error);
+    console.log(error, " updateUser");
     return res.status(500).json(error);
   }
 };
@@ -175,7 +198,7 @@ const currentUser = async (req, res) => {
 
     return res.json(user);
   } catch (error) {
-    console.log(error);
+    console.log(error, "currentUser");
     return res.status(500).json(error);
   }
 };
@@ -200,23 +223,10 @@ const deleteUser = async (req, res) => {
 
     return res.json(deletedUser, { message: "Пользователь успешно удален" });
   } catch (error) {
-    console.log(error);
+    console.log(error, "deleteUser");
     res.status(500).json(error);
   }
 };
-
-// const getUsers = async (req, res) => {
-//   try {
-//     const users = await db.User.findAll({
-//       include: [db.Comment, db.Rating, db.Basket, db.Wishlist],
-//     });
-
-//     return res.json(users);
-//   } catch (error) {
-//     console.log(error);
-//     return res.status(500).json(error);
-//   }
-// };
 
 module.exports = {
   registration,
@@ -225,6 +235,6 @@ module.exports = {
   getUserById,
   updateUser,
   currentUser,
+  getAllUsers,
   deleteUser,
-  // getUsers,
 };
