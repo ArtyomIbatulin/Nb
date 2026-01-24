@@ -177,7 +177,7 @@ const updateUser = async (req, res) => {
 const currentUser = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
-      where: { id: req.user.userId },
+      where: { id: req.user.id },
       include: {
         followers: {
           include: {
