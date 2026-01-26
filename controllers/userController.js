@@ -142,7 +142,7 @@ const updateUser = async (req, res) => {
     filePath = req.file.path;
   }
 
-  if (id !== req.user.userId) {
+  if (id !== req.user.id) {
     return res.status(403).json({ error: "Нет доступа" });
   }
 
@@ -203,30 +203,30 @@ const currentUser = async (req, res) => {
   }
 };
 
-const deleteUser = async (req, res) => {
-  const { id } = req.params;
+// const deleteUser = async (req, res) => {
+//   const { id } = req.params;
 
-  try {
-    const user = await prisma.user.findUnique({ where: { id } });
+//   try {
+//     const user = await prisma.user.findUnique({ where: { id } });
 
-    if (!user) {
-      return res
-        .status(404)
-        .json({ error: "Пользователь  с этим id не найден" });
-    }
+//     if (!user) {
+//       return res
+//         .status(404)
+//         .json({ error: "Пользователь  с этим id не найден" });
+//     }
 
-    const deletedUser = await prisma.$transaction([
-      prisma.cart.deleteMany({ where: { userId: id } }),
-      prisma.wishlist.deleteMany({ where: { userId: id } }),
-      prisma.user.delete({ where: { id } }),
-    ]);
+//     const deletedUser = await prisma.$transaction([
+//       prisma.cart.deleteMany({ where: { userId: id } }),
+//       prisma.wishlist.deleteMany({ where: { userId: id } }),
+//       prisma.user.delete({ where: { id } }),
+//     ]);
 
-    return res.json(deletedUser, { message: "Пользователь успешно удален" });
-  } catch (error) {
-    console.log(error, "deleteUser");
-    res.status(500).json(error);
-  }
-};
+//     return res.json(deletedUser, { message: "Пользователь успешно удален" });
+//   } catch (error) {
+//     console.log(error, "deleteUser");
+//     res.status(500).json(error);
+//   }
+// };
 
 module.exports = {
   registration,
@@ -236,5 +236,5 @@ module.exports = {
   updateUser,
   currentUser,
   getAllUsers,
-  deleteUser,
+  // deleteUser,
 };
