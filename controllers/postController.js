@@ -1,9 +1,8 @@
-// const { default: prisma } = require("../prisma/prisma-client");
 const prisma = require("../prisma/prisma-client");
 
 const createPost = async (req, res) => {
   const { content } = req.body;
-  const authorId = req.user.userId;
+  const authorId = req.user.id;
 
   if (!content) {
     res.status(400).json({ error: "Не должно быть пустым" });
@@ -17,7 +16,7 @@ const createPost = async (req, res) => {
       },
     });
 
-    return res.status(201).json(post, { message: "Пост создан" });
+    return res.status(201).json(post);
   } catch (error) {
     console.log(error, "error: createPost");
     return res.status(500).json(error);
@@ -25,7 +24,7 @@ const createPost = async (req, res) => {
 };
 
 const getAllPosts = async (req, res) => {
-  const userId = req.user.userId;
+  const userId = req.user.id;
 
   try {
     const posts = await prisma.post.findMany({
@@ -53,7 +52,7 @@ const getAllPosts = async (req, res) => {
 
 const getPostById = async (req, res) => {
   const { id } = req.params;
-  const userId = req.user.userId;
+  const userId = req.user.id;
 
   try {
     const post = await prisma.post.findUnique({
@@ -94,7 +93,7 @@ const deletePost = async (req, res) => {
     res.status(404).json({ error: "Пост не найден" });
   }
 
-  if (post.authorId !== req.userId) {
+  if (post.authorId !== req.user.id) {
     res.status(403).json({ error: "Нет доступа" });
   }
 
