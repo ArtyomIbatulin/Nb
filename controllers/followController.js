@@ -1,9 +1,8 @@
-// const { default: prisma } = require("../prisma/prisma-client");
 const prisma = require("../prisma/prisma-client");
 
 const followUser = async (req, res) => {
   const { followingId } = req.body;
-  const userId = req.user.userId;
+  const userId = req.user.id;
 
   if (followingId === userId) {
     return res
@@ -37,7 +36,7 @@ const followUser = async (req, res) => {
 
 const unfollowUser = async (req, res) => {
   const { followingId } = req.body;
-  const userId = req.user.userId;
+  const userId = req.user.id;
 
   try {
     const follows = await prisma.follows.findFirst({
