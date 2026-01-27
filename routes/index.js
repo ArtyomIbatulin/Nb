@@ -45,6 +45,6 @@ router.post("/likes", authMiddleware, likeController.likePost);
 router.delete("/likes/:id", authMiddleware, likeController.unlikePost);
 
 router.post("/follow", authMiddleware, followController.followUser);
-router.delete("/unfollow/:id", authMiddleware, followController.unfollowUser);
+router.delete("/unfollow", authMiddleware, followController.unfollowUser);
 
 module.exports = router;
