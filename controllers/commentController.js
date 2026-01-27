@@ -1,11 +1,10 @@
-// const { default: prisma } = require("../prisma/prisma-client");
 const prisma = require("../prisma/prisma-client");
 
 const createComment = async (req, res) => {
   const { postId, content } = req.body;
-  const userId = req.user.userId;
+  const userId = req.user.id;
 
-  if (!post || !content) {
+  if (!postId || !content) {
     res.status(400).json({ message: "Все поля обязательны" });
   }
 
@@ -27,7 +26,7 @@ const createComment = async (req, res) => {
 
 const deleteComment = async (req, res) => {
   const { id } = req.params;
-  const userId = req.user.userId;
+  const userId = req.user.id;
 
   try {
     const comment = await prisma.comment.findUnique({ where: { id } });
