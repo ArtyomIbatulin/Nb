@@ -1,10 +1,8 @@
-// const { default: prisma } = require("../prisma/prisma-client");
 const prisma = require("../prisma/prisma-client");
 
 const likePost = async (req, res) => {
-  const { postId } = req.params;
-  const userId = req.user.userId;
-
+  const { postId } = req.body;
+  const userId = req.user.id;
   try {
     if (!postId) {
       return res.status(400).json({ message: "Все поля обязательны" });
@@ -33,7 +31,7 @@ const likePost = async (req, res) => {
 
 const unlikePost = async (req, res) => {
   const { id } = req.params;
-  const userId = req.user.userId;
+  const userId = req.user.id;
 
   if (!id) {
     return res.status(400).json({ message: "Вы уже ставили дизлайк" });
